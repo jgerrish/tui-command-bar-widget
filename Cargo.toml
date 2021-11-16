@@ -1,0 +1,31 @@
+[package]
+name = "tui-command-bar-widget"
+version = "0.1.0"
+edition = "2021"
+authors = ["Joshua Gerrish <jgerrish@gmail.com>"]
+description = "Command Bar Widget using the Rust TUI library"
+keywords = ["tui", "terminal", "cli"]
+readme = "README.md"
+repository = "https://github.com/jgerrish/tui-command-bar-widget"
+homepage = "https://github.com/jgerrish/tui-command-bar-widget"
+license = "MIT"
+
+[dependencies]
+config = "0.11"
+unicode-width = "0.1"
+tui = { version = "0.16", features = ["crossterm"] }
+crossterm = "0.22"
+termion = "1.5"
+clap = "2.33"
+log = "0.4"
+env_logger = "0.9.0"
+i18n-embed = { version = "0.13", features = ["fluent-system", "desktop-requester"]}
+rust-embed = "6.2"
+toml = "0.5"
+toml-query = "0.9"
+mockall_double = "0.2"
+mockall = "0.10"
+
+[dev-dependencies]
+pretty_assertions = "1.0"
+criterion = "0.3"
