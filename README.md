@@ -1,4 +1,5 @@
 # tui-command-bar-widget
+![build](https://github.com/jgerrish/tui-command-bar-widget/actions/workflows/rust.yml/badge.svg)
 
 This is a tui-rs widget for command bars or command lines.
 
