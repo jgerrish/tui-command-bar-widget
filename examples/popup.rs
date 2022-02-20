@@ -7,7 +7,7 @@
 /// Pressing the escape key closes the popup box.
 use std::{error::Error, io};
 
-use config;
+use config::Config;
 use env_logger;
 use log::{debug, error, info};
 
@@ -36,7 +36,6 @@ use tui_command_bar_widget::widgets::command_bar::{CommandBar, EventHandlerResul
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Load config
-    let mut settings = config::Config::default();
     let mut debug = true;
     let mut command_key = ':';
 
@@ -45,14 +44,14 @@ fn main() -> Result<(), Box<dyn Error>> {
         panic!("couldn't initialize logger: {:?}", e);
     }
 
-    let settings_result = load_settings(&mut settings, "config/tui-command-bar-widget.toml");
+    let settings_result = load_settings("config/tui-command-bar-widget.toml");
     match settings_result {
-        Ok(()) => {
+        Ok(settings) => {
             info!("merged in config");
             if let Ok(b) = settings.get_bool("debug") {
                 debug = b;
             }
-            if let Ok(k) = settings.get_str("command-key") {
+            if let Ok(k) = settings.get_string("command-key") {
                 command_key = match k.chars().next() {
                     Some(c) => c,
                     None => command_key,
@@ -203,15 +202,13 @@ fn fixed_height_centered_rect(percent_x: u16, height: u16, r: Rect) -> Rect {
 /// load settings from a config file
 /// returns the config settings as a Config on success, or a ConfigError on failure
 fn load_settings<'a>(
-    settings: &'a mut config::Config,
     config_name: &str,
-) -> Result<(), config::ConfigError> {
-    settings
+) -> Result<Config, config::ConfigError> {
+    Config::builder()
         // Add in config file
-        .merge(config::File::with_name(config_name))?
+        .add_source(config::File::with_name(config_name))
         // Add in settings from the environment (with a prefix of APP)
         // Eg.. `APP_DEBUG=1 ./target/command_bar_widget would set the `debug` key
-        .merge(config::Environment::with_prefix("APP"))?;
-
-    Ok(())
+        .add_source(config::Environment::with_prefix("APP"))
+        .build()
 }

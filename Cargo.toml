@@ -11,21 +11,21 @@ homepage = "https://github.com/jgerrish/tui-command-bar-widget"
 license = "MIT"
 
 [dependencies]
-config = "0.11"
+config = "0.12"
 unicode-width = "0.1"
 tui = { version = "0.16", features = ["crossterm"] }
-crossterm = "0.22"
+crossterm = "0.23"
 termion = "1.5"
 clap = "2.33"
 log = "0.4"
-env_logger = "0.9.0"
+env_logger = "0.9"
 i18n-embed = { version = "0.13", features = ["fluent-system", "desktop-requester"]}
-rust-embed = "6.2"
+rust-embed = "6.3"
 toml = "0.5"
 toml-query = "0.9"
 mockall_double = "0.2"
-mockall = "0.10"
+mockall = "0.11"
 
 [dev-dependencies]
-pretty_assertions = "1.0"
+pretty_assertions = "1.1"
 criterion = "0.3"
