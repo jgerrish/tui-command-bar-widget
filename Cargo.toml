@@ -22,10 +22,9 @@ env_logger = "0.9"
 i18n-embed = { version = "0.13", features = ["fluent-system", "desktop-requester"]}
 rust-embed = "6.3"
 toml = "0.5"
-toml-query = "0.9"
 mockall_double = "0.2"
 mockall = "0.11"
 
 [dev-dependencies]
 pretty_assertions = "1.1"
-criterion = "0.3"
+# criterion = "0.3"
