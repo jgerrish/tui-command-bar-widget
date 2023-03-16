@@ -209,9 +209,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, app: &App, command_bar_widget: &mut CommandB
 
 /// load settings from a config file
 /// returns the config settings as a Config on success, or a ConfigError on failure
-fn load_settings<'a>(
-    config_name: &str,
-) -> Result<Config, config::ConfigError> {
+fn load_settings<'a>(config_name: &str) -> Result<Config, config::ConfigError> {
     Config::builder()
         // Add in config file
         .add_source(config::File::with_name(config_name))

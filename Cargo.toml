@@ -16,7 +16,6 @@ unicode-width = "0.1"
 tui = { version = "0.16", features = ["crossterm"] }
 crossterm = "0.23"
 termion = "1.5"
-clap = "2.33"
 log = "0.4"
 env_logger = "0.9"
 i18n-embed = { version = "0.13", features = ["fluent-system", "desktop-requester"]}
@@ -24,7 +23,3 @@ rust-embed = "6.3"
 toml = "0.5"
 mockall_double = "0.2"
 mockall = "0.11"
-
-[dev-dependencies]
-pretty_assertions = "1.1"
-# criterion = "0.3"

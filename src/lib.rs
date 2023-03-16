@@ -29,7 +29,7 @@ pub mod crossterm {
     #[cfg_attr(test, automock)]
     pub mod event {
         pub fn read() -> ::crossterm::Result<::crossterm::event::Event> {
-            return ::crossterm::event::read();
+            ::crossterm::event::read()
         }
 
         pub use crossterm::event::Event;

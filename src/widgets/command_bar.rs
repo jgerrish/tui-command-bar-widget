@@ -109,7 +109,7 @@ pub enum EventHandlerResult {
 }
 
 impl<'a> KeyHook<'a, CommandBar<'a>> for CommandBar<'a> {
-    fn register_key(&mut self, key: char, f: &'a dyn Fn(&mut Self, char) -> ()) {
+    fn register_key(&mut self, key: char, f: &'a dyn Fn(&mut Self, char)) {
         self.command_key = Some(key);
         self.key_database.keys.insert(key, f);
     }
@@ -147,9 +147,10 @@ impl<'a> CommandBar<'a> {
     /// assert_eq!(received, "some input");
     /// ```
     pub fn default_with_tx_channel(tx_channel: mpsc::Sender<String>) -> Self {
-        let mut cb = CommandBar::default();
-        cb.tx_channel = Some(tx_channel);
-        cb
+        CommandBar {
+            tx_channel: Some(tx_channel),
+            ..Default::default()
+        }
     }
 
     /// Commit changes in the command bar and close the command bar
@@ -203,14 +204,8 @@ impl<'a> CommandBar<'a> {
                             // be better thought out
                             if self.key_database.keys.contains_key(&k) {
                                 let value_option = self.key_database.keys.get(&k);
-                                match value_option {
-                                    Some(f) => {
-                                        (*f)(self, k);
-                                        //handled = true;
-                                    }
-                                    None => {
-                                        //handled = false;
-                                    }
+                                if let Some(f) = value_option {
+                                    (*f)(self, k);
                                 }
                             }
                             match self.command_key {
@@ -312,7 +307,7 @@ impl<'a> Widget for &mut CommandBar<'a> {
         self.width = area.width - 2;
 
         let input = Paragraph::new(Text::from(self.input.as_ref()))
-            .style(match self.input_mode.clone() {
+            .style(match self.input_mode {
                 InputMode::Normal => Style::default(),
                 InputMode::Editing => Style::default().fg(Color::Yellow),
             })

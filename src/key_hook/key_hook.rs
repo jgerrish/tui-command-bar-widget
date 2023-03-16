@@ -6,11 +6,12 @@ use std::collections::HashMap;
 
 /// The KeyDatabase stores command keys and the functions they invoke
 #[derive(Clone)]
+#[allow(clippy::type_complexity)]
 pub struct KeyDatabase<'a, T> {
     /// keys is the actual key database, implemented as a HashMap
     /// mappings characters to functions that accept a generic object
     /// and a character
-    pub keys: HashMap<char, &'a dyn Fn(&mut T, char) -> ()>,
+    pub keys: HashMap<char, &'a dyn Fn(&mut T, char)>,
 }
 
 impl<'a, T> Default for KeyDatabase<'a, T> {
@@ -36,7 +37,7 @@ impl<'a, T> Default for KeyDatabase<'a, T> {
 /// on the global hook.
 pub trait KeyHook<'a, T> {
     /// Register a key listener
-    fn register_key(&mut self, key: char, f: &'a dyn Fn(&mut T, char) -> ());
+    fn register_key(&mut self, key: char, f: &'a dyn Fn(&mut T, char));
 
     /// Unregister a key listener
     fn unregister_key(&mut self, key: char);

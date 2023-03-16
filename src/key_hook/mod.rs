@@ -4,4 +4,5 @@
 /// Right now this is a simple database of keys and hooks,
 /// eventually it may evolve into an event system.
 ///
+#[allow(clippy::module_inception)]
 pub mod key_hook;

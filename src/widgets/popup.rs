@@ -14,6 +14,9 @@ pub struct Popup<'a> {
     pub command_bar: CommandBar<'a>,
 }
 
+/// Overriding derivable_impls clippy to explictly show how the fields
+/// are initialized.
+#[allow(clippy::derivable_impls)]
 impl<'a> Default for Popup<'a> {
     fn default() -> Popup<'a> {
         Popup {
@@ -24,7 +27,7 @@ impl<'a> Default for Popup<'a> {
 }
 
 impl<'a> KeyHook<'a, CommandBar<'a>> for Popup<'a> {
-    fn register_key(&mut self, key: char, f: &'a dyn Fn(&mut CommandBar<'a>, char) -> ()) {
+    fn register_key(&mut self, key: char, f: &'a dyn Fn(&mut CommandBar<'a>, char)) {
         self.command_bar.command_key = Some(key);
         self.command_bar.key_database.keys.insert(key, f);
     }
@@ -46,19 +49,18 @@ impl<'a> Popup<'a> {
     /// If the widget is not registered to handle the event, pass it to the parent
     pub fn handle_event(&mut self) -> EventHandlerResult {
         let res = self.command_bar.handle_event();
-        match res {
-            EventHandlerResult::Ok => match self.command_bar.input_mode {
+        if res == EventHandlerResult::Ok {
+            match self.command_bar.input_mode {
                 InputMode::Normal => {
                     self.show_popup = false;
                 }
                 InputMode::Editing => {
                     self.show_popup = true;
                 }
-            },
-            _ => {}
+            }
         }
 
-        return res;
+        res
     }
 }
 

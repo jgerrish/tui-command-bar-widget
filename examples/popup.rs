@@ -201,9 +201,7 @@ fn fixed_height_centered_rect(percent_x: u16, height: u16, r: Rect) -> Rect {
 
 /// load settings from a config file
 /// returns the config settings as a Config on success, or a ConfigError on failure
-fn load_settings<'a>(
-    config_name: &str,
-) -> Result<Config, config::ConfigError> {
+fn load_settings<'a>(config_name: &str) -> Result<Config, config::ConfigError> {
     Config::builder()
         // Add in config file
         .add_source(config::File::with_name(config_name))
