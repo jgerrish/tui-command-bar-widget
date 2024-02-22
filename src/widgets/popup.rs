@@ -1,7 +1,7 @@
 ///
 /// Popup widget to wrap a CommandBar in a popup
 ///
-use tui::{buffer::Buffer, layout::Rect, widgets::Widget};
+use ratatui::{buffer::Buffer, layout::Rect, widgets::Widget};
 
 use super::command_bar::{CommandBar, EventHandlerResult, InputMode};
 use crate::key_hook::key_hook::KeyHook;

@@ -13,11 +13,10 @@ use std::sync::{mpsc, mpsc::SendError};
 use ::crossterm::event::{Event, KeyCode};
 use unicode_width::UnicodeWidthStr;
 
-use tui::{
+use ratatui::{
     buffer::Buffer,
     layout::Rect,
     style::{Color, Style},
-    text::Text,
     widgets::{Block, Borders, Paragraph, Widget},
 };
 
@@ -46,7 +45,7 @@ pub enum InputMode {
 /// # Example
 ///
 /// ```
-/// use tui::{Frame, backend::TestBackend, layout::{Layout, Rect}, Terminal};
+/// use ratatui::{Frame, backend::TestBackend, layout::{Layout, Rect}, Terminal};
 /// use tui_command_bar_widget::widgets::command_bar::{EventHandlerResult, InputMode, CommandBar};
 /// use tui_command_bar_widget::key_hook::key_hook::KeyHook;
 ///
@@ -306,7 +305,7 @@ impl<'a> Widget for &mut CommandBar<'a> {
         // Future versions could maybe scroll the text left
         self.width = area.width - 2;
 
-        let input = Paragraph::new(Text::from(self.input.as_ref()))
+        let input = Paragraph::new(self.input.clone())
             .style(match self.input_mode {
                 InputMode::Normal => Style::default(),
                 InputMode::Editing => Style::default().fg(Color::Yellow),
@@ -321,7 +320,7 @@ impl<'a> Widget for &mut CommandBar<'a> {
 mod tests {
     use log::debug;
 
-    use tui::{
+    use ratatui::{
         backend::TestBackend,
         buffer::Buffer,
         layout::Rect,

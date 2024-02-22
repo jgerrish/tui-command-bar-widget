@@ -8,6 +8,7 @@
 use std::{error::Error, io};
 
 use config::Config;
+#[allow(clippy::single_component_path_imports)]
 use env_logger;
 use log::{debug, error, info};
 
@@ -16,11 +17,12 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use tui::{
+use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
+    prelude::Line,
     style::{Modifier, Style},
-    text::{Span, Spans, Text},
+    text::{Span, Text},
     widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame, Terminal,
 };
@@ -33,6 +35,7 @@ pub struct App {
     pub messages: Vec<String>,
 }
 
+#[allow(clippy::derivable_impls)]
 impl Default for App {
     fn default() -> App {
         App {
@@ -91,8 +94,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // create command_bar_widget and run it
     let mut command_bar_widget = CommandBar::default();
-    let mut closure = |cb: &mut CommandBar, key| cb.command_key_handler(key);
-    command_bar_widget.register_key(command_key, &mut closure);
+    let closure = |cb: &mut CommandBar, key| cb.command_key_handler(key);
+    command_bar_widget.register_key(command_key, &closure);
 
     let res = run_app(&mut terminal, app, command_bar_widget);
 
@@ -114,11 +117,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn run_app<B: Backend>(
     terminal: &mut Terminal<B>,
-    mut app: App,
+    app: App,
     mut command_bar_widget: CommandBar,
 ) -> io::Result<()> {
     loop {
-        terminal.draw(|f| ui(f, &mut app, &mut command_bar_widget))?;
+        terminal.draw(|f| ui(f, &app, &mut command_bar_widget))?;
 
         // TODO: refactor into proper event handling tree
         match command_bar_widget.handle_event() {
@@ -131,11 +134,10 @@ fn run_app<B: Backend>(
             // The widget didn't know how to handle the event, so we should
             EventHandlerResult::Unhandled(event) => {
                 if let Event::Key(key) = event {
-                    match key.code {
-                        KeyCode::Char('q') => {
-                            return Ok(());
-                        }
-                        _ => {}
+                    if let KeyCode::Char('q') = key.code {
+                        return Ok(());
+                    } else {
+                        {}
                     };
                 };
             }
@@ -145,7 +147,7 @@ fn run_app<B: Backend>(
 
 /// UI event loop function
 /// This may be run on every iteration of the event loop
-fn ui<B: Backend>(f: &mut Frame<B>, app: &App, command_bar_widget: &mut CommandBar) {
+fn ui(f: &mut Frame, app: &App, command_bar_widget: &mut CommandBar) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .margin(2)
@@ -181,8 +183,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, app: &App, command_bar_widget: &mut CommandB
             Style::default(),
         ),
     };
-    let mut text = Text::from(Spans::from(msg));
-    text.patch_style(style);
+    let text = Text::from(Line::from(msg)).patch_style(style);
     let help_message = Paragraph::new(text);
     f.render_widget(help_message, chunks[0]);
     let width = command_bar_widget.input.len();
@@ -198,7 +199,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, app: &App, command_bar_widget: &mut CommandB
         .iter()
         .enumerate()
         .map(|(i, m)| {
-            let content = vec![Spans::from(Span::raw(format!("{}: {}", i, m)))];
+            let content = Line::from(Span::raw(format!("{}: {}", i, m)));
             ListItem::new(content)
         })
         .collect();
@@ -209,7 +210,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, app: &App, command_bar_widget: &mut CommandB
 
 /// load settings from a config file
 /// returns the config settings as a Config on success, or a ConfigError on failure
-fn load_settings<'a>(config_name: &str) -> Result<Config, config::ConfigError> {
+fn load_settings(config_name: &str) -> Result<Config, config::ConfigError> {
     Config::builder()
         // Add in config file
         .add_source(config::File::with_name(config_name))

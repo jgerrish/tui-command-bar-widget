@@ -8,13 +8,14 @@
 use std::{error::Error, io};
 
 use config::Config;
+#[allow(clippy::single_component_path_imports)]
 use env_logger;
 use log::{debug, error, info};
 
 // This adds a width() method to String
 use unicode_width::UnicodeWidthStr;
 
-use tui::{
+use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
@@ -82,8 +83,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // create app and run it
     let mut command_bar_widget = Popup::default();
-    let mut closure = |cb: &mut CommandBar, key| cb.command_key_handler(key);
-    command_bar_widget.register_key(command_key, &mut closure);
+    let closure = |cb: &mut CommandBar, key| cb.command_key_handler(key);
+    command_bar_widget.register_key(command_key, &closure);
     let res = run_app(&mut terminal, command_bar_widget);
 
     // restore terminal
@@ -116,9 +117,10 @@ fn run_app<B: Backend>(
             EventHandlerResult::Ok => {}
             EventHandlerResult::Unhandled(event) => {
                 if let Event::Key(key) = event {
-                    match key.code {
-                        KeyCode::Char('q') => return Ok(()),
-                        _ => {}
+                    if let KeyCode::Char('q') = key.code {
+                        return Ok(());
+                    } else {
+                        {}
                     }
                 }
             }
@@ -126,17 +128,14 @@ fn run_app<B: Backend>(
     }
 }
 
-fn ui<B: Backend>(f: &mut Frame<B>, command_bar_widget: &mut Popup) {
+fn ui(f: &mut Frame, command_bar_widget: &mut Popup) {
     let size = f.size();
 
     let chunks = Layout::default()
         .constraints([Constraint::Percentage(20), Constraint::Percentage(80)].as_ref())
         .split(size);
 
-    let command_key = match command_bar_widget.command_bar.command_key {
-        Some(key) => key,
-        None => 'p',
-    };
+    let command_key = command_bar_widget.command_bar.command_key.unwrap_or('p');
 
     let escape_key = "Esc";
 
@@ -201,7 +200,7 @@ fn fixed_height_centered_rect(percent_x: u16, height: u16, r: Rect) -> Rect {
 
 /// load settings from a config file
 /// returns the config settings as a Config on success, or a ConfigError on failure
-fn load_settings<'a>(config_name: &str) -> Result<Config, config::ConfigError> {
+fn load_settings(config_name: &str) -> Result<Config, config::ConfigError> {
     Config::builder()
         // Add in config file
         .add_source(config::File::with_name(config_name))

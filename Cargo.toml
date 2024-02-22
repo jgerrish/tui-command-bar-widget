@@ -1,6 +1,6 @@
 [package]
 name = "tui-command-bar-widget"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Joshua Gerrish <jgerrish@gmail.com>"]
 description = "Command Bar Widget using the Rust TUI library"
@@ -13,7 +13,7 @@ license = "MIT"
 [dependencies]
 config = "0.12"
 unicode-width = "0.1"
-tui = { version = "0.16", features = ["crossterm"] }
+ratatui = { version = "0.26", features = ["crossterm"] }
 crossterm = "0.23"
 termion = "1.5"
 log = "0.4"

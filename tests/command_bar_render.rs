@@ -1,5 +1,5 @@
 #[cfg(test)]
-use tui::{backend::TestBackend, buffer::Buffer, layout::Rect, style::Color, Terminal};
+use ratatui::{backend::TestBackend, buffer::Buffer, layout::Rect, style::Color, Terminal};
 
 use mockall::*;
 
