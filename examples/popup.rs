@@ -18,8 +18,9 @@ use unicode_width::UnicodeWidthStr;
 use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Alignment, Constraint, Direction, Layout, Rect},
+    prelude::Line,
     style::{Color, Modifier, Style},
-    text::{Span, Spans},
+    text::Span,
     widgets::{Block, Borders, Clear, List, ListItem, Paragraph, Wrap},
     Frame, Terminal,
 };
@@ -163,7 +164,7 @@ fn ui(f: &mut Frame, command_bar_widget: &mut Popup) {
         .iter()
         .enumerate()
         .map(|(i, m)| {
-            let content = vec![Spans::from(Span::raw(format!("{}: {}", i, m)))];
+            let content = Line::from(Span::raw(format!("{}: {}", i, m)));
             ListItem::new(content)
         })
         .collect();
