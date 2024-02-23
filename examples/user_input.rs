@@ -147,7 +147,7 @@ fn run_app<B: Backend>(
 
 /// UI event loop function
 /// This may be run on every iteration of the event loop
-fn ui(f: &mut Frame, app: &App, command_bar_widget: &mut CommandBar) {
+fn ui(f: &mut Frame, _app: &App, command_bar_widget: &mut CommandBar) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .margin(2)
@@ -161,13 +161,16 @@ fn ui(f: &mut Frame, app: &App, command_bar_widget: &mut CommandBar) {
         )
         .split(f.size());
 
+    let cmd_key = command_bar_widget.command_key.unwrap_or(':');
+    let cmd_key_str = format!("{}", cmd_key);
+
     let (msg, style) = match command_bar_widget.input_mode {
         InputMode::Normal => (
             vec![
                 Span::raw("Press "),
                 Span::styled("q", Style::default().add_modifier(Modifier::BOLD)),
                 Span::raw(" to exit, "),
-                Span::styled("e", Style::default().add_modifier(Modifier::BOLD)),
+                Span::styled(cmd_key_str, Style::default().add_modifier(Modifier::BOLD)),
                 Span::raw(" to start editing."),
             ],
             Style::default().add_modifier(Modifier::RAPID_BLINK),
@@ -192,9 +195,7 @@ fn ui(f: &mut Frame, app: &App, command_bar_widget: &mut CommandBar) {
         f.set_cursor(chunks[1].x + width as u16 + 1, chunks[1].y + 1);
     }
 
-    f.render_widget(command_bar_widget, chunks[1]);
-
-    let messages: Vec<ListItem> = app
+    let messages: Vec<ListItem> = command_bar_widget
         .messages
         .iter()
         .enumerate()
@@ -205,6 +206,8 @@ fn ui(f: &mut Frame, app: &App, command_bar_widget: &mut CommandBar) {
         .collect();
     let messages =
         List::new(messages).block(Block::default().borders(Borders::ALL).title("Messages"));
+
+    f.render_widget(command_bar_widget, chunks[1]);
     f.render_widget(messages, chunks[2]);
 }
 

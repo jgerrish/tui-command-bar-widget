@@ -19,8 +19,8 @@ use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
-    text::Span,
-    widgets::{Block, Borders, Clear, Paragraph, Wrap},
+    text::{Span, Spans},
+    widgets::{Block, Borders, Clear, List, ListItem, Paragraph, Wrap},
     Frame, Terminal,
 };
 
@@ -156,7 +156,20 @@ fn ui(f: &mut Frame, command_bar_widget: &mut Popup) {
         .title("Content")
         .borders(Borders::ALL)
         .style(Style::default().bg(Color::Blue));
-    f.render_widget(block, chunks[1]);
+
+    let messages: Vec<ListItem> = command_bar_widget
+        .command_bar
+        .messages
+        .iter()
+        .enumerate()
+        .map(|(i, m)| {
+            let content = vec![Spans::from(Span::raw(format!("{}: {}", i, m)))];
+            ListItem::new(content)
+        })
+        .collect();
+
+    let messages = List::new(messages).block(block);
+    f.render_widget(messages, chunks[1]);
 
     if command_bar_widget.show_popup {
         let area = fixed_height_centered_rect(80, 3, size);
